@@ -1,0 +1,17 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tweet Classifier</title>
+</head>
+<body>
+    <h1>Tweet Classifier</h1>
+    <form method="POST">
+        <textarea name="tweet" placeholder="Enter tweet here"></textarea><br>
+        <button type="submit">Classify</button>
+    </form>
+    {% if prediction %}
+        <h2>Prediction: {{ prediction }}</h2>
+    {% endif %}
+</body>
+</html>
