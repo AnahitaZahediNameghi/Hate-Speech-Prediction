@@ -1,24 +1,30 @@
-import streamlit as st
-import joblib
-import numpy as np
+
+import os
 import re
 import nltk
+nltk.download('punkt_tab')
+import gensim
+import joblib
+import numpy as np
+import pandas as pd 
+import streamlit as st
+import sklearn
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from gensim.models import Word2Vec
 from sklearn.preprocessing import StandardScaler
-from xgboost import XGBClassifier
+from tqdm import tqdm  # For progress bar
 
-# Download necessary NLTK packages
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
+stop_words = set(stopwords.words('english'))
+lemmatizer = WordNetLemmatizer()
 
 # Load models and pre-trained objects
-word2vec_model = joblib.load('models/word2vec_model.joblib')
-scaler = joblib.load('models/scaler.joblib')
-xgb_model = joblib.load('models/xgb_model.joblib')
+WORD2VEC_MODEL_PATH = "word2vec_model.joblib"
+XGB_MODEL_PATH = "best_xgb_model.joblib"
+SCALER_PATH = "scaler.joblib"
 
 # Initialize NLTK tools
 stop_words = set(stopwords.words('english'))
