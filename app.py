@@ -22,18 +22,18 @@ stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
 # Load models and pre-trained objects
-WORD2VEC_MODEL_PATH = "word2vec_model" # Removed .joblib - we'll load differently
+WORD2VEC_MODEL_PATH = "word2vec_model.joblib" 
 XGB_MODEL_PATH = "best_xgb_model.joblib"
 SCALER_PATH = "scaler.joblib"
   
+# Load pre-trained models and scaler
 try:
-    word2vec_model = gensim.load(WORD2VEC_MODEL_PATH) #Simplified loading
-    # ... rest of your code ...
+    word2vec_model = joblib.load(WORD2VEC_MODEL_PATH)
+    model = joblib.load(XGB_MODEL_PATH)
+    scaler = joblib.load(SCALER_PATH)
+    vector_size = word2vec_model.vector_size
 except FileNotFoundError as e:
     st.error(f"Error: {e}")
-    st.stop()
-except Exception as e:
-    st.error(f"Error loading models: {e}")
     st.stop()
 
 print("Models loaded successfully.") # Check if reached this point
