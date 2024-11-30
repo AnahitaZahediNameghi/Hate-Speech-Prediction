@@ -26,18 +26,24 @@ WORD2VEC_MODEL_PATH = "word2vec_model" # Removed .joblib - we'll load differentl
 XGB_MODEL_PATH = "best_xgb_model.joblib"
 SCALER_PATH = "scaler.joblib"
 
-# Load pre-trained models and scaler
+      
 try:
-    word2vec_model = gensim.models.load(WORD2VEC_MODEL_PATH) # Correct loading
+    word2vec_model = gensim.models.load(WORD2VEC_MODEL_PATH)
+    print(f"Word2Vec model loaded successfully: {word2vec_model}")  # Check if model loaded correctly
     model = joblib.load(XGB_MODEL_PATH)
+    print(f"XGBoost model loaded successfully: {model}")  # Check XGBoost model
     scaler = joblib.load(SCALER_PATH)
+    print(f"Scaler loaded successfully: {scaler}")  # Check scaler
     vector_size = word2vec_model.vector_size
+    print(f"Vector size: {vector_size}") # Check vector size
 except FileNotFoundError as e:
     st.error(f"Error: {e}")
     st.stop()
-except Exception as e: # Catch other potential errors during loading
+except Exception as e:
     st.error(f"Error loading models: {e}")
     st.stop()
+
+print("Models loaded successfully.") # Check if reached this point
 
 # Text preprocessing function
 def clean_text(text):
