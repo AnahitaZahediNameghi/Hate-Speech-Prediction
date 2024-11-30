@@ -1,31 +1,25 @@
-
-import os
-import re
-import nltk
-import gensim
+import streamlit as st
 import joblib
 import numpy as np
-import pandas as pd 
-import streamlit as st
-import sklearn
+import re
+import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from gensim.models import Word2Vec
 from sklearn.preprocessing import StandardScaler
-from tqdm import tqdm  # For progress bar
+from xgboost import XGBClassifier
 
-nltk.download('punkt_tab') # Simplified downloads
+# Download necessary NLTK packages
+nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-stop_words = set(stopwords.words('english'))
-lemmatizer = WordNetLemmatizer()
-
 # Load models and pre-trained objects
-WORD2VEC_MODEL_PATH = "word2vec_model.joblib" 
+WORD2VEC_MODEL_PATH = "word2vec_model.joblib"
 XGB_MODEL_PATH = "best_xgb_model.joblib"
 SCALER_PATH = "scaler.joblib"
-  
+
 # Load pre-trained models and scaler
 try:
     word2vec_model = joblib.load(WORD2VEC_MODEL_PATH)
@@ -36,7 +30,9 @@ except FileNotFoundError as e:
     st.error(f"Error: {e}")
     st.stop()
 
-print("Models loaded successfully.") # Check if reached this point
+# Initialize NLTK tools
+stop_words = set(stopwords.words('english'))
+lemmatizer = WordNetLemmatizer()
 
 # Text preprocessing function
 def clean_text(text):
@@ -57,16 +53,19 @@ def clean_text(text):
 
 # Function to compute average Word2Vec embeddings for text
 def get_avg_word2vec(tokens, model, vector_size):
+    # Ensure tokens are valid and non-empty
     if not tokens:
         return np.zeros(vector_size)
     
     valid_tokens = [token for token in tokens if token in model.wv.key_to_index]
     
     if not valid_tokens:
+        # If no valid tokens, return zero vector
         return np.zeros(vector_size)
     
-    embeddings = [model.wv[token] for token in valid_tokens]
-    return np.mean(embeddings, axis = 0)
+    # Compute the average of valid tokens' embeddings
+    return np.mean([model.wv[token] for token in valid_tokens], axis = 0)
+
 
 # Streamlit app interface
 st.title('Hate Speech Detection')
@@ -83,7 +82,7 @@ if st.button('Classify'):
         tokens = cleaned_text.split()
 
         # Get Word2Vec embeddings for the input text
-        embedding = get_avg_word2vec(tokens, word2vec_model, vector_size)
+        embedding = get_avg_word2vec(tokens, word2vec_model, 100)
 
         # Scale the embeddings for the model input
         scaled_embedding = scaler.transform([embedding])
