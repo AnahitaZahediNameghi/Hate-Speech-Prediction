@@ -15,7 +15,7 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm  # For progress bar
 
-nltk.download('punkt')
+nltk.download('punkt_tab')
 nltk.download('stopwords')
 nltk.download('wordnet')
 stop_words = set(stopwords.words('english'))
@@ -49,14 +49,22 @@ def clean_text(text):
 
 # Function to compute average Word2Vec embeddings for text
 def get_avg_word2vec(tokens, model, vector_size):
-    valid_tokens = [token for token in tokens if token in model.wv.key_to_index]
-    if not valid_tokens:
+    # Ensure tokens are valid and non-empty
+    if not tokens:
         return np.zeros(vector_size)
-    return np.mean([model.wv[token] for token in valid_tokens], axis=0)
+    
+    valid_tokens = [token for token in tokens if token in model.wv.key_to_index]
+    
+    if not valid_tokens:
+        # If no valid tokens, return zero vector
+        return np.zeros(vector_size)
+    
+    # Compute the average of valid tokens' embeddings
+    return np.mean([model.wv[token] for token in valid_tokens], axis = 0)
 
 # Streamlit app interface
 st.title('Hate Speech Detection')
-st.markdown('### Classify text as Hate Speech, Offensive Language, or Neutral.')
+st.markdown('### Classify Text as Hate Speech, Offensive Language, or Neutral.')
 
 # Text input
 user_input = st.text_area('Enter text to classify:', '')
