@@ -25,6 +25,8 @@ nltk.download('wordnet')
 stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
+
+
 # Define text preprocessing function
 def clean_text(text):
     if not isinstance(text, str):
@@ -42,6 +44,8 @@ def clean_text(text):
     cleaned_tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
     return " ".join(cleaned_tokens)
 
+
+
 # Load the dataset:
 # Load models and pre-trained objects
 WORD2VEC_MODEL_PATH = "word2vec_model.joblib"
@@ -57,6 +61,8 @@ try:
 except FileNotFoundError as e:
     st.error(f"Error: {e}")
     st.stop()
+
+
 
 # Text preprocessing function
 def clean_text(text):
@@ -75,20 +81,15 @@ def clean_text(text):
     cleaned_tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
     return " ".join(cleaned_tokens)
 
-# Function to compute average Word2Vec embeddings for text
+
+
 def get_avg_word2vec(tokens, model, vector_size):
-    # Ensure tokens are valid and non-empty
-    if not tokens:
-        return np.zeros(vector_size)
-    
     valid_tokens = [token for token in tokens if token in model.wv.key_to_index]
-    
     if not valid_tokens:
-        # If no valid tokens, return zero vector
-        return np.zeros(vector_size)
-    
-    # Compute the average of valid tokens' embeddings
+        return np.zeros(vector_size) 
     return np.mean([model.wv[token] for token in valid_tokens], axis = 0)
+
+
 
 # Streamlit app interface
 st.title('Hate Speech Detection')
@@ -96,6 +97,8 @@ st.markdown('### Classify Text as Hate Speech, Offensive Language, or Neutral.')
 
 # Text input
 user_input = st.text_area('Enter text to classify:', '')
+
+
 
 # Prediction logic
 if st.button('Classify'):
