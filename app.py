@@ -25,17 +25,10 @@ lemmatizer = WordNetLemmatizer()
 WORD2VEC_MODEL_PATH = "word2vec_model" # Removed .joblib - we'll load differently
 XGB_MODEL_PATH = "best_xgb_model.joblib"
 SCALER_PATH = "scaler.joblib"
-
-      
+  
 try:
-    word2vec_model = gensim.models.load(WORD2VEC_MODEL_PATH)
-    print(f"Word2Vec model loaded successfully: {word2vec_model}")  # Check if model loaded correctly
-    model = joblib.load(XGB_MODEL_PATH)
-    print(f"XGBoost model loaded successfully: {model}")  # Check XGBoost model
-    scaler = joblib.load(SCALER_PATH)
-    print(f"Scaler loaded successfully: {scaler}")  # Check scaler
-    vector_size = word2vec_model.vector_size
-    print(f"Vector size: {vector_size}") # Check vector size
+    word2vec_model = gensim.load(WORD2VEC_MODEL_PATH) #Simplified loading
+    # ... rest of your code ...
 except FileNotFoundError as e:
     st.error(f"Error: {e}")
     st.stop()
