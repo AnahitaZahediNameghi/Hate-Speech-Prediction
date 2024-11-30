@@ -2,7 +2,6 @@
 import os
 import re
 import nltk
-nltk.download('punkt_tab')
 import gensim
 import joblib
 import numpy as np
@@ -15,30 +14,30 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm  # For progress bar
 
-nltk.download('punkt_tab')
+nltk.download('punkt_tab') # Simplified downloads
 nltk.download('stopwords')
 nltk.download('wordnet')
+
 stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
 # Load models and pre-trained objects
-WORD2VEC_MODEL_PATH = "word2vec_model.joblib"
+WORD2VEC_MODEL_PATH = "word2vec_model" # Removed .joblib - we'll load differently
 XGB_MODEL_PATH = "best_xgb_model.joblib"
 SCALER_PATH = "scaler.joblib"
 
 # Load pre-trained models and scaler
 try:
-    word2vec_model = joblib.load(WORD2VEC_MODEL_PATH)
+    word2vec_model = gensim.models.load(WORD2VEC_MODEL_PATH) # Correct loading
     model = joblib.load(XGB_MODEL_PATH)
     scaler = joblib.load(SCALER_PATH)
     vector_size = word2vec_model.vector_size
 except FileNotFoundError as e:
     st.error(f"Error: {e}")
     st.stop()
-
-# Initialize NLTK tools
-stop_words = set(stopwords.words('english'))
-lemmatizer = WordNetLemmatizer()
+except Exception as e: # Catch other potential errors during loading
+    st.error(f"Error loading models: {e}")
+    st.stop()
 
 # Text preprocessing function
 def clean_text(text):
@@ -59,18 +58,16 @@ def clean_text(text):
 
 # Function to compute average Word2Vec embeddings for text
 def get_avg_word2vec(tokens, model, vector_size):
-    # Ensure tokens are valid and non-empty
     if not tokens:
         return np.zeros(vector_size)
     
     valid_tokens = [token for token in tokens if token in model.wv.key_to_index]
     
     if not valid_tokens:
-        # If no valid tokens, return zero vector
         return np.zeros(vector_size)
     
-    # Compute the average of valid tokens' embeddings
-    return np.mean([model.wv[token] for token in valid_tokens], axis = 0)
+    embeddings = [model.wv[token] for token in valid_tokens]
+    return np.mean(embeddings, axis = 0)
 
 # Streamlit app interface
 st.title('Hate Speech Detection')
