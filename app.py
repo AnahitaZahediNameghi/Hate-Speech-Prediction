@@ -87,7 +87,7 @@ if st.button('Classify'):
         tokens = cleaned_text.split()
 
         # Get Word2Vec embeddings for the input text
-        embedding = get_avg_word2vec(tokens, word2vec_model, 100)
+        embedding = get_avg_word2vec(tokens, word2vec_model, vector_size)
 
         # Scale the embeddings for the model input
         scaled_embedding = scaler.transform([embedding])
